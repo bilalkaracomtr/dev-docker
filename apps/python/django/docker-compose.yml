@@ -1,0 +1,16 @@
+services:
+  django:
+    build: .
+    container_name: django
+    restart: unless-stopped
+    volumes:
+      - ../../../../apps/python/django-test:/app
+    ports:
+      - "8080:8000"
+    networks:
+      - core
+
+networks:
+  core:
+    external: true
+    name: core_net

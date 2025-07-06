@@ -1,0 +1,18 @@
+services:
+  php74-apache:
+    build: .
+    container_name: php74-apache
+    restart: unless-stopped
+    ports:
+      - "7074:80"
+    volumes:
+      - ../../../apps/ttoc/public:/var/www/html
+      - ../../../apps/ttoc/storage:/var/www/storage
+      - ./apache.conf:/etc/apache2/sites-enabled/000-default.conf
+    networks:
+      - core
+
+networks:
+  core:
+    external: true
+    name: core_net

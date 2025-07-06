@@ -1,0 +1,105 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - ./volumes/redis:/data
+    networks:
+      - core
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - core
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    networks:
+      - core
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    volumes:
+      - ./volumes/pgadmin:/var/lib/pgadmin
+    networks:
+      - core
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./services/nginx/conf.d:/etc/nginx/conf.d
+      - ./services/nginx/logs:/var/log/nginx
+    networks:
+      - core
+
+  mysql8:
+    image: mysql:8
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    networks:
+      - core
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "8081:80"
+    networks:
+      - core
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web panel
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./volumes/minio:/data
+    networks:
+      - core
+
+networks:
+  core:
+    name: core_net
+    driver: bridge

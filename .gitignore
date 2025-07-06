@@ -1,0 +1,18 @@
+# Ortak servislerin .env dosyası
+core/.env
+
+# Servis volume dosyaları (veri içerir, Git'e alınmaz)
+core/volumes/
+core/services/nginx/logs/
+
+# Tüm projeler Git dışı kalacak (kodlar apps/ klasöründe)
+../apps/
+
+# Sistem klasörleri
+.DS_Store
+.vscode/
+.idea/
+
+# Node.js / PHP gibi sistemlerde kullanılabilir klasörler
+node_modules/
+vendor/

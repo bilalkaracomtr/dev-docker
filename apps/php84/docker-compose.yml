@@ -1,0 +1,14 @@
+services:
+  php84:
+    build: .
+    container_name: php84
+    restart: unless-stopped
+    volumes:
+      - ../../../apps/php84:/var/www/html
+    networks:
+      - core
+
+networks:
+  core:
+    external: true
+    name: core_net
